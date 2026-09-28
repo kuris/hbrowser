@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">HBrowser</string>
+    <string name="policy_notice">이 앱은 사용자가 접근 권한을 가진 일반 파일과 DRM 없는 미디어 다운로드만 지원합니다.</string>
+    <string name="download_channel_name">다운로드</string>
+    <string name="download_channel_desc">HBrowser 파일 다운로드</string>
+</resources>
