@@ -32,6 +32,7 @@ import androidx.compose.ui.platform.LocalDensity
 import kr.chriskim.hbrowser.core.model.MediaCandidate
 import kr.chriskim.hbrowser.core.model.MediaType
 import kr.chriskim.hbrowser.feature.adblock.engine.AdBlockEngine
+import kr.chriskim.hbrowser.feature.download.service.YouTubeDownloader
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -161,6 +162,19 @@ fun BrowserScreen(
                             contentDescription = "북마크",
                             tint = if (isBookmarked) MaterialTheme.colorScheme.primary
                                    else MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                    // YouTube/TVWiki51 다운로드 버튼
+                    IconButton(
+                        onClick = { vm.downloadYouTubeOrTvWiki51(currentUrl) },
+                        enabled = YouTubeDownloader.isSupportedUrl(currentUrl)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.VideoLibrary,
+                            contentDescription = "YouTube/TVWiki51 다운로드",
+                            tint = if (YouTubeDownloader.isSupportedUrl(currentUrl))
+                                MaterialTheme.colorScheme.primary
+                            else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)
                         )
                     }
                     BadgedBox(
