@@ -18,6 +18,7 @@ import kr.chriskim.hbrowser.feature.download.DownloadRequest
 import kr.chriskim.hbrowser.feature.history.HistoryRepository
 import kr.chriskim.hbrowser.feature.media.MediaCandidateStore
 import kr.chriskim.hbrowser.feature.settings.SettingsRepository
+import kr.chriskim.hbrowser.feature.download.service.YouTubeDownloader
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
@@ -28,7 +29,8 @@ class BrowserViewModel(
     private val settingsRepo: SettingsRepository,
     private val historyRepo: HistoryRepository,
     private val bookmarkRepo: BookmarkRepository,
-    private val adBlockRepo: AdBlockRepository
+    private val adBlockRepo: AdBlockRepository,
+    private val youtubeDownloader: YouTubeDownloader
 ) : ViewModel() {
 
     // ── 브라우저 상태 ─────────────────────────────────────────
@@ -186,6 +188,37 @@ class BrowserViewModel(
 
     fun toggleMediaSheet()  { _mediaSheet.value = !_mediaSheet.value }
     fun hideMediaSheet()    { _mediaSheet.value = false }
+
+    // ── YouTube/TVWiki51 다운로드 ──────────────────────────────
+    fun downloadYouTubeOrTvWiki51(url: String) {
+        if (!YouTubeDownloader.isSupportedUrl(url)) {
+            // YouTube/TVWiki51이 아니면 일반 다운로드
+            downloadMediaCandidate(
+                MediaCandidate(
+                    id = url.hashCode().toString(),
+                    url = url,
+                    pageUrl = url,
+                    type = MediaType.HLS,
+                    fileName = url.substringAfterLast("/"),
+                    source = MediaSource.RESOURCE_REQUEST
+                ),
+                null
+            )
+            return
+        }
+
+        viewModelScope.launch {
+            val result = downloadRepo.startYouTubeDownload(url, _title.value)
+            result.fold(
+                onSuccess = { id ->
+                    // 다운로드 시작됨
+                },
+                onFailure = { error ->
+                    // 에러 처리 (사용자에게 알림)
+                }
+            )
+        }
+    }
 }
 
 data class PendingDownload(

@@ -13,6 +13,7 @@ import kr.chriskim.hbrowser.feature.download.DownloadRepository
 import kr.chriskim.hbrowser.feature.download.DownloadRepositoryImpl
 import kr.chriskim.hbrowser.feature.download.DownloadViewModel
 import kr.chriskim.hbrowser.feature.download.manager.SystemDownloadManager
+import kr.chriskim.hbrowser.feature.download.service.YouTubeDownloader
 import kr.chriskim.hbrowser.feature.history.HistoryRepository
 import kr.chriskim.hbrowser.feature.history.HistoryViewModel
 import kr.chriskim.hbrowser.feature.media.MediaCandidateStore
@@ -50,7 +51,8 @@ class AppContainer(private val app: Application) {
 
     // ── Download ──────────────────────────────────────────────
     val sysDm: SystemDownloadManager by lazy { SystemDownloadManager(app) }
-    val downloadRepo: DownloadRepository by lazy { DownloadRepositoryImpl(app, db, sysDm) }
+    val youtubeDownloader: YouTubeDownloader by lazy { YouTubeDownloader(app) }
+    val downloadRepo: DownloadRepository by lazy { DownloadRepositoryImpl(app, db, sysDm, youtubeDownloader) }
 
     // ── History ───────────────────────────────────────────────
     val historyRepo: HistoryRepository by lazy { HistoryRepository(db) }
@@ -69,7 +71,8 @@ class AppContainer(private val app: Application) {
         settingsRepo       = settingsRepo,
         historyRepo        = historyRepo,
         bookmarkRepo       = bookmarkRepo,
-        adBlockRepo        = adBlockRepo
+        adBlockRepo        = adBlockRepo,
+        youtubeDownloader  = youtubeDownloader
     )
 
     fun createDownloadViewModel()  = DownloadViewModel(downloadRepo)
